@@ -2,10 +2,6 @@
 
 Simple script for autotesting codegen
 
-## TODO:
-* multiple tests for one instruction
-* Improve analysis (not just find substr with INSTRUCTION_NAME)
-
 ## How to use:
 * git clone https://github.com/SpinSpinSugar/riscv-check
 * if not installed: pip install colorama
