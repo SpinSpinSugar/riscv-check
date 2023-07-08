@@ -1,3 +1,5 @@
+* multiple tests for one instruction
+* Improve analysis (not just find substr with INSTRUCTION_NAME)
 * ror
 * rol
 * rev8
