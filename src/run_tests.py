@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from colorama import init, Fore
 init(autoreset=True)
 
-#TODO clean
+#TODO clean #=pylint: disable=fixme 
 TMP_DIR = 'tmp'
 curDir = os.getcwd()
 #print(curDir)
