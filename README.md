@@ -1,7 +1,6 @@
 # riscv-check
 =========
-.. image:: https://img.shields.io/badge/linting-pylint-yellowgreen
-    :target: https://github.com/pylint-dev/pylint
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 =========
 
 Simple script for autotesting codegen
