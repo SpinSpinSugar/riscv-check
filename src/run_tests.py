@@ -17,7 +17,7 @@ extDirs = os.listdir(TMP_DIR)
 
 @dataclass
 class Statistics:
-    teest_counter: int = 0
+    test_counter: int = 0
     passed_counter: int = 0
 stat = Statistics()
 
