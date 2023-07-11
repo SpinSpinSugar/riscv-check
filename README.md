@@ -7,8 +7,8 @@ Simple script for autotesting codegen
 ## How to use:
 ```
 git clone https://github.com/SpinSpinSugar/riscv-check
-pip install colorama
 python3 runme.py
+(if nothing happens when script trying to download packages: just restart, it's python bug")
 optional: python3 clearTemps.py
 ```
 
