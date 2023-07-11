@@ -11,10 +11,18 @@ if not MARCH:
     MARCH = 'rv64imafdc_zicsr'
     print('Using default: ', MARCH)
 
+XLEN = 0
+if MARCH.find('32') != -1:
+    XLEN = 32
+elif MARCH.find('64') != -1:
+    XLEN = 64
+else:
+    raise NotImplementedError('not 32 or 64 bit arch,128 support not added')
+
 MABI = input('Provide -mabi arguments (default = lp64d): ')
 if not MABI:
     MABI = 'lp64d'
-    print('Using default: ', MARCH)
+    print('Using default: ', MABI)
 
 OPT_LEVEL = input('Provide optimization level (default = 0): ')
 if not OPT_LEVEL:
@@ -56,7 +64,7 @@ for curDir in extensionsList:
         fileName =  curDir + '/' + file
         clearFilename = fileName.split('.')[0]
         #print(fileName)
-        params = f'-march={MARCH} -mabi={MABI} -O{OPT_LEVEL} -S {fileName}'
+        params = f'-DXLEN={XLEN} -march={MARCH} -mabi={MABI} -O{OPT_LEVEL} -S {fileName}'
         outputParams = f'-o {TMP_DIR}/{clearFilename}.s'
         #print(f'{compilerName} {params} {outputParams}')
         stream = os.popen(f'{COMPILER_NAME} {params} {outputParams}')
