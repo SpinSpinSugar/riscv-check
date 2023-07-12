@@ -1,5 +1,5 @@
-int test(int x, int y) {
-	int result = x < y ? x : y;
+int test(int rs1, int rs2) {
+	int result = rs1 < rs2 ? rs1 : rs2;
 	return result;
 }
 

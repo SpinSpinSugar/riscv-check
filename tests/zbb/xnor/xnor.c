@@ -1,4 +1,4 @@
-int test(int x, int y) {
-	int res = ~(x ^ y);
-	return res;
+int test(int rs1, int rs2) {
+	int result = ~(rs1 ^ rs2);
+	return result;
 }
