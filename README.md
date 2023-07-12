@@ -7,7 +7,7 @@ Simple script for autotesting codegen
 ## How to use:
 ```
 git clone https://github.com/SpinSpinSugar/riscv-check
-python3 runme.py
+python3 run_me.py
 (if nothing happens when script trying to download packages: just restart, it's python bug")
 optional: python3 clearTemps.py
 ```
@@ -16,7 +16,9 @@ optional: python3 clearTemps.py
 ```
 cd tests
 mkdir %YOUR RISC-V EXTENSION NAME%, for example zba
-touch %INSTRUCTION_NAME%.c, for example ctz.c
+cd %YOUR RISC-V EXTENSION NAME%
+mkdir %INSTRUCTION_NAME%, for example andn
+touch %TEST_NAME%.c, for example andn
 ```
 
 ### File format (function name is important!!!)
