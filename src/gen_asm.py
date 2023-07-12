@@ -11,6 +11,7 @@ if not MARCH:
     MARCH = 'rv64imafdc_zicsr'
     print('Using default: ', MARCH)
 
+"""
 XLEN = 0
 if MARCH.find('32') != -1:
     XLEN = 32
@@ -18,6 +19,7 @@ elif MARCH.find('64') != -1:
     XLEN = 64
 else:
     raise NotImplementedError('not 32 or 64 bit arch,128 support not added')
+"""
 
 MABI = input('Provide -mabi arguments (default = lp64d): ')
 if not MABI:
@@ -53,20 +55,30 @@ if TMP_DIR in extensionsList:
     shutil.rmtree(TMP_DIR)
     extensionsList.remove(TMP_DIR)
 
-os.mkdir(TMP_DIR)
+instrList = []
 for ext in extensionsList:
-    os.mkdir(TMP_DIR + f'/{ext}')
+    instrList.append((ext, os.listdir(f'{TESTS_DIR}/{ext}'))
+)
+
+#print(instrList)
+
+os.mkdir(TMP_DIR)
+for instrDir in instrList:
+    os.mkdir(TMP_DIR + f'/{instrDir[0]}')
+    for instrName in instrDir[1]:
+        os.mkdir(TMP_DIR + f'/{instrDir[0]}/{instrName}') 
+
 
 #Run compiler for generate assembly files
-for curDir in extensionsList:
-    fileList = os.listdir(curDir)
-    for file in fileList:
-        fileName =  curDir + '/' + file
-        clearFilename = fileName.split('.')[0]
-        #print(fileName)
-        params = f'-DXLEN={XLEN} -march={MARCH} -mabi={MABI} -O{OPT_LEVEL} -S {fileName}'
-        outputParams = f'-o {TMP_DIR}/{clearFilename}.s'
-        #print(f'{compilerName} {params} {outputParams}')
-        stream = os.popen(f'{COMPILER_NAME} {params} {outputParams}')
-        stream.close()
+for instr in instrList:
+    for instrName in instr[1]:
+        #print(instr[1])
+        #print(f'{TESTS_DIR}/{instr[0]}/{instrName}')
+        for testFile in os.listdir(f'{TESTS_DIR}/{instr[0]}/{instrName}'):
+            filename_no_ext = testFile.removesuffix('.c')
+            params = f'-march={MARCH} -mabi={MABI} -O{OPT_LEVEL} -S {TESTS_DIR}/{instr[0]}/{instrName}/{testFile}'
+            outputParams = f'-o {TMP_DIR}/{instr[0]}/{instrName}/{filename_no_ext}.s'
+            #print(f'{COMPILER_NAME} {params} {outputParams}')
+            stream = os.popen(f'{COMPILER_NAME} {params} {outputParams}')
+            stream.close()
 
