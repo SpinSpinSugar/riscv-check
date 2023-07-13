@@ -31,6 +31,7 @@ for extDir in extList:
         test_number = 0
         #print(testsList)
         ext_stat = Statistics()
+        print(instrDir)
         for file in testsList:
             test_number += 1
             commandName = file.removesuffix('.s')
@@ -39,19 +40,20 @@ for extDir in extList:
                 asmText = asmFile.read()
                 fooPos = asmText.find('test')
                 res = asmText.find(instrDir, fooPos)
-                falseRes = asmText.find(f'__{instrDir}', fooPos) + 2 
+                falseRes = asmText.find(f'__{instrDir}', fooPos) + 2
+                falseRes_builtin = asmText.find({f'call\t__builtin'})
             #print(res)
             ext_stat.test_counter += 1
             total_stat.test_counter += 1
-            if res not in [-1, falseRes]:
+            if res not in [-1, falseRes, falseRes_builtin]:
                 print(Fore.GREEN + f'TEST #{test_number} PASSED: {commandName} is generated')
                 ext_stat.passed_counter += 1
                 total_stat.passed_counter += 1
             else:
                 print(Fore.RED + f'TEST #{test_number} FAILED: {commandName} is not supported')
-                print(Fore.RED + f'Error in file {extDir}/{instrDir}/{file}')
+                #print(Fore.RED + f'Error in file {extDir}/{instrDir}/{file}')
                 #if falseResi:
                 #	print(Fore.RED + f'Used __{commandName}')
-        print(f'Stats for {instrDir}: Passed {ext_stat.passed_counter}/{ext_stat.test_counter} tests')
+        print(f'Stats for {instrDir}: Passed {ext_stat.passed_counter}/{ext_stat.test_counter} tests\n')
 print(f'Total: Passed {total_stat.passed_counter}/{total_stat.test_counter} tests')
 

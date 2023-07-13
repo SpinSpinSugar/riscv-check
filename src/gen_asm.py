@@ -1,7 +1,7 @@
 import os
 import shutil
 
-COMPILER_NAME = input('Provide compiler name (default = riscv64-unknown-linux-gnu-gcc: ')
+COMPILER_NAME = input('Provide compiler name (default = riscv64-unknown-linux-gnu-gcc): ')
 if not COMPILER_NAME:
     COMPILER_NAME = 'riscv64-unknown-linux-gnu-gcc'
     print('Using default: ', COMPILER_NAME)
