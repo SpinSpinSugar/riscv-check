@@ -41,11 +41,11 @@ for extDir in extList:
                 fooPos = asmText.find('test')
                 res = asmText.find(instrDir, fooPos)
                 falseRes = asmText.find(f'__{instrDir}', fooPos) + 2
-                falseRes_builtin = asmText.find({f'call\t__builtin'})
+                falseRes_builtin = asmText.find(f'\t__builtin_riscv')
             #print(res)
             ext_stat.test_counter += 1
             total_stat.test_counter += 1
-            if res not in [-1, falseRes, falseRes_builtin]:
+            if (res not in [-1, falseRes]) and (falseRes_builtin == -1):
                 print(Fore.GREEN + f'TEST #{test_number} PASSED: {commandName} is generated')
                 ext_stat.passed_counter += 1
                 total_stat.passed_counter += 1
