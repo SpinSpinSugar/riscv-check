@@ -1,28 +1,19 @@
-#!/usr/bin/python3
-
+#!/usr/bin/env python3.11
+"""This module collects arguments and runs whole program"""
 import os
 import sys
-import subprocess
+from src import riscv_check_argparse
 
-def is_venv():
-    return sys.prefix != sys.base_prefix
+def main():
+    """Parse args then generate asm then run tests"""
+    args = riscv_check_argparse.parse_args()
+    compiler_name = args.compiler
+    march = args.march
+    mabi = args.mabi
+    opt_lvl = args.opt_level
+    os.system(f'python3 src/gen_asm.py {compiler_name} {march} {mabi} {opt_lvl}')
+    os.system('python3 src/run_tests.py')
+    print('You can check generated ASM in /tests/tmp')
 
-if not is_venv():
-# create virtual enviroment:
-    venv_proc = subprocess.Popen([sys.executable, '-m', 'venv', '.env'])
-    venv_proc.wait()
-
-    venv_activate_proc = subprocess.Popen(['/bin/sh', '.env/bin/activate'], stdin=subprocess.PIPE, shell=True)
-    venv_activate_proc.stdin.close()
-    venv_activate_proc.wait()
-    print('VENV activated')
-
-    colorama_install_proc = subprocess.Popen([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-    colorama_install_proc.wait()
-
-
-os.system('python3 src/gen_asm.py')
-#os.wait()
-os.system('python3 src/run_tests.py')
-
-print('You can check generated ASM in /tests/tmp')
+if __name__ == '__main__':
+    sys.exit(main())
