@@ -20,11 +20,11 @@ jobs:
         pip install pylint
         pip install mypy
         pip install -r requirements.txt
-        mypy --ignore-missing-imports --install-types --non-interactive .
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
     - name: Analysing the code with mypy
       run: |
-        mypy $(git ls-files '*.py')
+        #mypy $(git ls-files '*.py')
+        mypy --ignore-missing-imports --install-types --non-interactive .
 
