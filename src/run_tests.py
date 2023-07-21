@@ -1,59 +1,132 @@
+"""This module checks if the desired asm instruction was generated after compilation"""
 import os
+import re
+import sys
 from dataclasses import dataclass
 from colorama import init, Fore
-init(autoreset=True)
+import src.dir_manager as dm
 
-#TODO clean #=pylint: disable=fixme 
-curDir = os.getcwd()
-#print(curDir)
-TMP_DIR = ''
-if curDir.endswith('src'):
-    TMP_DIR = curDir + '/../tests/tmp'
-elif curDir.endswith('riscv-check'):
-    TMP_DIR = curDir + '/tests/tmp'
-else:
-    exit(1)
-os.chdir(TMP_DIR)
-#print(TMP_DIR)
+init(autoreset=True)
 
 @dataclass
 class Statistics:
+    """Statistics counter"""
     test_counter: int = 0
     passed_counter: int = 0
-total_stat = Statistics()
+    def print_stats(self, name: str) -> None:
+        """Printing stats with name"""
+        print(f'{name}: Passed {self.passed_counter}/{self.test_counter} tests')
 
-extList = os.listdir(TMP_DIR)
-for extDir in extList:
-    instrDirList = os.listdir(extDir)
-    #print(instrDirList)
-    for instrDir in instrDirList:
-        testsList = os.listdir(f'{extDir}/{instrDir}')
-        test_number = 0
-        #print(testsList)
-        ext_stat = Statistics()
-        print(instrDir)
-        for file in testsList:
-            test_number += 1
-            commandName = file.removesuffix('.s')
-            # FIXME
-            with open(f'{extDir}/{instrDir}/{commandName}.s', 'r', encoding='utf-8') as asmFile:
-                asmText = asmFile.read()
-                fooPos = asmText.find('test')
-                res = asmText.find(instrDir, fooPos)
-                falseRes = asmText.find(f'__{instrDir}', fooPos) + 2
-                falseRes_builtin = asmText.find(f'\t__builtin_riscv')
-            #print(res)
-            ext_stat.test_counter += 1
-            total_stat.test_counter += 1
-            if (res not in [-1, falseRes]) and (falseRes_builtin == -1):
-                print(Fore.GREEN + f'TEST #{test_number} PASSED: {commandName} is generated')
-                ext_stat.passed_counter += 1
-                total_stat.passed_counter += 1
-            else:
-                print(Fore.RED + f'TEST #{test_number} FAILED: {commandName} is not supported')
-                #print(Fore.RED + f'Error in file {extDir}/{instrDir}/{file}')
-                #if falseResi:
-                #	print(Fore.RED + f'Used __{commandName}')
-        print(f'Stats for {instrDir}: Passed {ext_stat.passed_counter}/{ext_stat.test_counter} tests\n')
-print(f'Total: Passed {total_stat.passed_counter}/{total_stat.test_counter} tests')
+class Test:
+    """Single test text with info"""
+    content: str = ''
+    passed: bool = False
+    test_name: str = ''
+    instr_name: str = ''
+    executed: bool = False
 
+    def __init__(self, path: str, test_name: str, instr_name: str):
+        with open(path, 'r', encoding='utf-8') as file_descriptor:
+            self.content = file_descriptor.read()
+        self.test_name = test_name
+        self.instr_name = instr_name
+
+    def run_test(self) -> None:
+        """Run test and return passed or not, set the passed field"""
+        label_begin = self.content.find('test:')
+        label_end = self.content.find('ret')
+        text = self.content[label_begin:label_end:1]
+
+        instr_pos = re.search(rf'\s{self.instr_name}\s', text)
+        if instr_pos:
+            self.passed = True
+        else:
+            self.passed = False
+        self.executed = True
+
+    def print_test(self, test_number: int, test_name: str) -> None:
+        """Print information about test"""
+        if not self.executed:
+            raise RuntimeError('Test was not executed before print')
+        if self.passed:
+            print(Fore.GREEN + f'TEST #{test_number} PASSED: {test_name} is generated')
+        else:
+            print(Fore.RED + f'TEST #{test_number} FAILED: {test_name} is not supported')
+
+    def get_result(self) -> bool:
+        """Returns true if test is passed, false otherwise. Raises exception executed=false"""
+        if not self.executed:
+            raise RuntimeError('Test was not executed before check')
+        return self.passed
+class TestGroup:
+    """Class to collect tests corresponding to same instruction"""
+    tests: list[Test] = []
+    name: str = ''
+    stats: Statistics = Statistics()
+
+    def __init__(self, name: str):
+        self.tests = []
+        self.name = name
+        self.stats = Statistics()
+    def append_test(self, test: Test) -> None:
+        """Adds test to TestGroup"""
+        self.tests.append(test)
+        self.stats.test_counter += 1
+    def run_tests(self) -> None:
+        """Run all tests in TestGroup"""
+        print(f'\n{self.name}')
+        i = 1
+        for test in self.tests:
+            test.run_test()
+            result = test.get_result()
+            if result:
+                self.stats.passed_counter += 1
+            test.print_test(i, test.test_name)
+            i += 1
+
+class TestsManager:
+    """Main class to run tests"""
+    tests_groups: list[TestGroup]
+    dir_manager: dm.DirManager
+    total_stat: Statistics
+
+    def __init__(self, dir_man: dm.DirManager):
+        self.tests_groups = []
+        self.dir_manager = dir_man
+        self.total_stat = Statistics()
+    def collect_test_groups(self) -> None:
+        """Generates TestGroups from directories"""
+        prev_dir = self.dir_manager.current_dir
+        self.dir_manager.chdir(self.dir_manager.tmp_dir)
+        ext_list = os.listdir(self.dir_manager.tmp_dir)
+        for ext_dir in ext_list:
+            instr_dir_list = os.listdir(ext_dir)
+            for instr_dir in instr_dir_list:
+                tests_list = os.listdir(f'{ext_dir}/{instr_dir}')
+                test_number = 0
+                test_group = TestGroup(instr_dir)
+                for file in tests_list:
+                    test_number += 1
+                    command_name = file.removesuffix('.s')
+                    test = Test(f'{ext_dir}/{instr_dir}/{command_name}.s', command_name, instr_dir)
+                    test_group.append_test(test)
+                self.tests_groups.append(test_group)
+        self.dir_manager.chdir(prev_dir)
+
+    def run(self) -> None:
+        """Runs all tests in all TestsGroups"""
+        for test_group in self.tests_groups:
+            test_group.run_tests()
+            self.total_stat.test_counter += test_group.stats.test_counter
+            self.total_stat.passed_counter += test_group.stats.passed_counter
+        self.total_stat.print_stats('\nTotal')
+
+def main():
+    """Collect and run tests"""
+    dir_manager = dm.DirManager()
+    tests_manager = TestsManager(dir_manager)
+    tests_manager.collect_test_groups()
+    tests_manager.run()
+
+if __name__ == '__main__':
+    sys.exit(main())

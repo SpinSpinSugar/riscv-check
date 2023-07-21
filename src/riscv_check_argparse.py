@@ -1,6 +1,7 @@
 """RISC-V CHECK argparse wrapper"""
 import argparse
 import sys
+
 def parse_args():
     """Wrapper for standard parser"""
     parser = argparse.ArgumentParser(description='Compiler options')
