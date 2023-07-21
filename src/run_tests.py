@@ -1,9 +1,8 @@
 """This module checks if the desired asm instruction was generated after compilation"""
 import os
 import re
-import sys
 from dataclasses import dataclass
-from colorama import init, Fore
+from colorama import init
 import src.dir_manager as dm
 
 init(autoreset=True)
@@ -44,20 +43,12 @@ class Test:
             self.passed = False
         self.executed = True
 
-    def print_test(self, test_number: int, test_name: str) -> None:
-        """Print information about test"""
-        if not self.executed:
-            raise RuntimeError('Test was not executed before print')
-        if self.passed:
-            print(Fore.GREEN + f'TEST #{test_number} PASSED: {test_name} is generated')
-        else:
-            print(Fore.RED + f'TEST #{test_number} FAILED: {test_name} is not supported')
-
     def get_result(self) -> bool:
         """Returns true if test is passed, false otherwise. Raises exception executed=false"""
         if not self.executed:
             raise RuntimeError('Test was not executed before check')
         return self.passed
+
 class TestGroup:
     """Class to collect tests corresponding to same instruction"""
     tests: list[Test] = []
@@ -74,26 +65,24 @@ class TestGroup:
         self.stats.test_counter += 1
     def run_tests(self) -> None:
         """Run all tests in TestGroup"""
-        print(f'\n{self.name}')
-        i = 1
         for test in self.tests:
             test.run_test()
             result = test.get_result()
             if result:
                 self.stats.passed_counter += 1
-            test.print_test(i, test.test_name)
-            i += 1
 
 class TestsManager:
     """Main class to run tests"""
     tests_groups: list[TestGroup]
     dir_manager: dm.DirManager
     total_stat: Statistics
+    ready: bool
 
     def __init__(self, dir_man: dm.DirManager):
         self.tests_groups = []
         self.dir_manager = dir_man
         self.total_stat = Statistics()
+        self.ready = False
     def collect_test_groups(self) -> None:
         """Generates TestGroups from directories"""
         prev_dir = self.dir_manager.current_dir
@@ -117,16 +106,19 @@ class TestsManager:
         """Runs all tests in all TestsGroups"""
         for test_group in self.tests_groups:
             test_group.run_tests()
-            self.total_stat.test_counter += test_group.stats.test_counter
-            self.total_stat.passed_counter += test_group.stats.passed_counter
-        self.total_stat.print_stats('\nTotal')
+        self.ready = True
 
-def main():
+    def is_ready(self) -> bool:
+        """Checks if tests were run"""
+        return self.ready
+
+def main() -> TestsManager:
     """Collect and run tests"""
     dir_manager = dm.DirManager()
     tests_manager = TestsManager(dir_manager)
     tests_manager.collect_test_groups()
     tests_manager.run()
+    return tests_manager
 
 if __name__ == '__main__':
-    sys.exit(main())
+    pass
