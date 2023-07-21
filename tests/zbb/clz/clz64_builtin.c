@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-int test(int64_t x) {
-    return __builtin_clz(x);
+int64_t test(int64_t x) {
+    return __builtin_clzl(x);
 }
-

@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-int test(int64_t rs) {
-	return __builtin_popcount(rs);
+int64_t test(int64_t rs) {
+	return __builtin_popcountl(rs);
 }
-
