@@ -9,6 +9,10 @@ def parse_args():
     parser.add_argument('march', type=str, help='Architecture parameter')
     parser.add_argument('mabi', type=str, help='ABI parameter')
     parser.add_argument('opt_level', type=str, help='Optimization level')
+    parser.add_argument('--format',
+                        type=str,
+                        default='default',
+                        help='output as type of formatted output')
     args = parser.parse_args()
     return args
 

@@ -41,12 +41,12 @@ async def gen_asm(ext_and_instr_list: list[dict], args, dir_manager: dm.DirManag
         await task.wait()
     dir_manager.chdir(prev_dir)
 
-def main():
-    """Generates asm files in tmp dir"""
+def main(args: list):
+    """Generates asm files in tmp dir
+    args (at least): compiler march mabi opt_level, otherwise behavior is undefined
+    """
+
     args = aparse.parse_args()
     dir_manager = dm.DirManager()
     ext_and_instr_list = dir_manager.gen_tmp_dirs()
     asyncio.run(gen_asm(ext_and_instr_list, args, dir_manager))
-
-if __name__=='__main__':
-    sys.exit(main())
