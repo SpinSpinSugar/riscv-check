@@ -1,3 +1,4 @@
+"""Module for TestsManager class"""
 import os
 import re
 from dataclasses import dataclass

@@ -1,6 +1,5 @@
 """This module creates tmp directories and asm files"""
 import os
-import sys
 import asyncio
 from typing import Coroutine
 import src.riscv_check_argparse as aparse

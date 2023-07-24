@@ -1,8 +1,7 @@
 # riscv-check
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 =========
-
-Simple script for autotesting codegen
+Simple script for testing RISC-V codegeneration of RISC-V extensions (currently bitmanip only)
 
 ## How to use:
 ```
@@ -28,5 +27,14 @@ int test(args...) {
 }
 ```
 
+### Try me:
+* python3 run_me.py riscv64-unknown-linux-gnu-gcc rv64gv_zba_zbb_zbc_zbs lp64d 3
+#for Syntacore's clang
+* python3 run_me.py "%PATH%/sc-dt_2022.12-sp1/llvm/bin/clang --target=riscv64" rv64gv_zba_zbb_zbc_zbs lp64d 3
+* ALSO: --format=csv
+
+
+
 ### Bitmanip march for testing:
 * rv64id_zba_zbb_zbc_zbs
+
