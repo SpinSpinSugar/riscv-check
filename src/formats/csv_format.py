@@ -18,7 +18,7 @@ class CSVFormat(IFormat):
         for test_group in self.tests_manager.tests_groups:
             for test in test_group.tests:
                 i += 1
-                writer.writerow([i, test.instr_name, test.test_name, test.get_result()])
+                writer.writerow([i, test.ext, test.instr_name, test.test_name, test.get_result()])
 
     def is_ready(self) -> bool:
         return True

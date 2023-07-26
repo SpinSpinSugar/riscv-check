@@ -15,9 +15,15 @@ def get_compiler_coro(args,
     march = args.march
     mabi = args.mabi
     opt_lvl = args.opt_level
+    additional_params = args.params
     tests_dir = dir_manager.tests_dir
     tmp_dir = dir_manager.tmp_dir
-    params = f'-march={march} -mabi={mabi} -O{opt_lvl} -S {tests_dir}/{ext}/{instr}/{test_file}'
+
+    params = f'{additional_params} ' + \
+             f'-march={march} ' + \
+             f'-mabi={mabi} ' + \
+             f'-O{opt_lvl} ' + \
+             f'-S {tests_dir}/{ext}/{instr}/{test_file} '
     pure_filename = test_file.removesuffix('.c')
     output_params = f'-o {tmp_dir}/{ext}/{instr}/{pure_filename}.s'
     return asyncio.create_subprocess_shell(f'{compiler_name} {params} {output_params}')

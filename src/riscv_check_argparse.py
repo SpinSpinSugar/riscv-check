@@ -11,8 +11,13 @@ def parse_args():
     parser.add_argument('opt_level', type=str, help='Optimization level')
     parser.add_argument('--format',
                         type=str,
+                        choices=['csv', 'default'],
                         default='default',
                         help='output as type of formatted output')
+    parser.add_argument('--params',
+                        type=str,
+                        default='',
+                        help='forwards parameters directly to compiler')
     args = parser.parse_args()
     return args
 
