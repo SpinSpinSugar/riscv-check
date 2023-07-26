@@ -1,40 +1,49 @@
-# riscv-check
-[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
-=========
-Simple script for testing RISC-V codegeneration of RISC-V extensions (currently bitmanip only)
+RISC-V Check
+==============
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint) [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 
-## How to use:
-```
+Description
+---------
+Simple script for testing RISC-V codegeneration of RISC-V extensions (currently bitmanip only)
+## Quick start:
+```sh
 git clone https://github.com/SpinSpinSugar/riscv-check
-python3 run_me.py
-(if nothing happens when script trying to download packages: just restart, it's python bug")
-optional: python3 clearTemps.py
+```
+Setup venv:
+```sh
+python3 -m venv .env
+source .env/bin/activate
+pip install -r requirements.txt
+```
+Example (gcc):
+```sh
+python3 riscv_check.py riscv64-unknown-linux-gnu-gcc rv64gv_zba_zbb_zbc_zbs lp64d 3
+python3 riscv_check.py --format="csv" riscv64-unknown-linux-gnu-gcc rv64gv_zba_zbb_zbc_zbs lp64d 3
+```
+Example (clang):
+```sh
+python3 riscv_check.py --params="--target=riscv64" clang rv64gv_zba_zbb_zbc_zbs lp64d 3
+python3 riscv_check.py --params="--target=riscv64" --format=csv clang rv64gv_zba_zbb_zbc_zbs lp64d 3 
 ```
 
 ### How to add your test
-```
+```sh
 cd tests
-mkdir %YOUR RISC-V EXTENSION NAME%, for example zba
+# for example zba
+mkdir %YOUR RISC-V EXTENSION NAME%
 cd %YOUR RISC-V EXTENSION NAME%
-mkdir %INSTRUCTION_NAME%, for example andn
-touch %TEST_NAME%.c, for example andn
+# for example andn
+mkdir %INSTRUCTION_NAME%
+# for example andn64.c
+touch %TEST_NAME%.c
 ```
-
-### File format (function name is important!!!)
-```
-int test(args...) {
+File format (function name is important!!!):
+```C
+#include <stdint.h>
+int64_t test(args...) {
 	//your code that you expect compiler to convert to INSTRUCTION_NAME assembly line
 }
 ```
 
-### Try me:
-* python3 run_me.py riscv64-unknown-linux-gnu-gcc rv64gv_zba_zbb_zbc_zbs lp64d 3
-#for Syntacore's clang
-* python3 run_me.py "%PATH%/sc-dt_2022.12-sp1/llvm/bin/clang --target=riscv64" rv64gv_zba_zbb_zbc_zbs lp64d 3
-* ALSO: --format=csv
-
-
-
 ### Bitmanip march for testing:
 * rv64id_zba_zbb_zbc_zbs
-
