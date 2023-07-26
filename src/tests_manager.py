@@ -17,14 +17,16 @@ class Statistics:
 class Test:
     """Single test text with info"""
     content: str = ''
+    ext: str = ''
     passed: bool = False
     test_name: str = ''
     instr_name: str = ''
     executed: bool = False
 
-    def __init__(self, path: str, test_name: str, instr_name: str):
+    def __init__(self, path: str, ext_name: str, test_name: str, instr_name: str):
         with open(path, 'r', encoding='utf-8') as file_descriptor:
             self.content = file_descriptor.read()
+        self.ext = ext_name
         self.test_name = test_name
         self.instr_name = instr_name
 
@@ -97,7 +99,10 @@ class TestsManager:
                 for file in tests_list:
                     test_number += 1
                     command_name = file.removesuffix('.s')
-                    test = Test(f'{ext_dir}/{instr_dir}/{command_name}.s', command_name, instr_dir)
+                    test = Test(f'{ext_dir}/{instr_dir}/{command_name}.s',
+                                ext_dir,
+                                command_name,
+                                instr_dir)
                     test_group.append_test(test)
                 self.tests_groups.append(test_group)
         self.dir_manager.chdir(prev_dir)
