@@ -99,7 +99,10 @@ class TestsManager:
                 for file in tests_list:
                     test_number += 1
                     command_name = file.removesuffix('.s')
-                    test = Test(f'{ext_dir}/{instr_dir}/{command_name}.s', ext_dir, command_name, instr_dir)
+                    test = Test(f'{ext_dir}/{instr_dir}/{command_name}.s',
+                                ext_dir,
+                                command_name,
+                                instr_dir)
                     test_group.append_test(test)
                 self.tests_groups.append(test_group)
         self.dir_manager.chdir(prev_dir)
